@@ -12,34 +12,27 @@ public class Coinstrip{
   public Coinstrip(){
     //Initialize board
     board = new int[5 + rng.nextInt(11)];
-    numCoins = 3 + rng.nextInt(4);
+    if(board.length < 7){
+      numCoins = 3;
+    } else if (board.length < 9){
+      numCoins = 4;
+    } else if (board.length < 11){
+      numCoins = 5;
+    } else if (board.length < 13){
+      numCoins = 6;
+    } else {
+      numCoins = 7;
+    }
 
     player = 1;
 
-    if(numCoins >= board.length || numCoins + 3 >= board.length){
-      numCoins -= 3;
-    }
-    //Populate board with 1 through numCoins with at least one 0 between each
-    //coin and some pairs of coins
-    /*
-    int n = 1;
-    for(int i = 0; i < board.length; i++){
-      if(rng.nextInt(2) == 1){
-        board[i] = n;
-        n++;
-      }
-      if(n == numCoins){
-        i = board.length;
-      }
-    }
-      */
     //Populate board with numCoin 1s with at least one 0 between each
     //coin and some pairs of coins
+
     int n = 0;
     int i = 0;
-    int probNext = 2;
     while(n < numCoins){
-      if(rng.nextInt(probNext) == 1 && board[i] == 0){
+      if(rng.nextInt(2) == 1 && board[i] == 0){
         board[i] = 1;
         i++;
         n++;
@@ -51,6 +44,15 @@ public class Coinstrip{
         System.out.println("x");
       }
     }
+
+    //Get rid of long sequences of coins
+    for(int x = 0; x < board.length; x++){
+      if(board[x] != 0 && board[x + 1] != 0 && board[x + 2] != 0){
+        board[x + rng.nextInt(3)] = 0;
+      }
+      System.out.println(board[x]);
+    }
+
     //Assign locations to coins
     int y = 1;
     for(int z = 0; z < board.length - 1; z++){
@@ -64,7 +66,7 @@ public class Coinstrip{
   public void displayBoard(){
     //Print out representation of current game board
     for(int i: board){
-      System.out.print(i + " ");
+      System.out.print(" | " + i + " |");
     }
   }
 
@@ -137,8 +139,13 @@ public class Coinstrip{
       if(!error){
         int nextCoinLoc = 0;
         for(int i = 0; i < board.length; i++){
+          if(coin == 1){
+            nextCoinLoc = 0;
+            i = board.length;
+          }
           if(coin - 1 == board[i]){
             nextCoinLoc = i;
+            i = board.length;
           }
         }
 
@@ -186,6 +193,5 @@ public class Coinstrip{
       won = b.won();
     }
     System.out.println("player " + (b.getPlayer() - 1) + " won");
-
   }
 }
