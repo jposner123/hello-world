@@ -1,3 +1,5 @@
+//I am the sole author of the work in this repository.
+
 import java.util.Random;
 import java.util.Scanner;
 
@@ -41,7 +43,6 @@ public class Coinstrip{
       }
       if(i >= board.length - 1){
         i = 0;
-        System.out.println("x");
       }
     }
 
@@ -50,12 +51,19 @@ public class Coinstrip{
       if(board[x] != 0 && board[x + 1] != 0 && board[x + 2] != 0){
         board[x + rng.nextInt(3)] = 0;
       }
-      System.out.println(board[x]);
+    }
+
+    //Correct numCoins after removing some from play
+    numCoins = 0;
+    for(int m = 0; m < board.length; m++){
+      if(board[m] != 0){
+        numCoins++;
+      }
     }
 
     //Assign locations to coins
     int y = 1;
-    for(int z = 0; z < board.length - 1; z++){
+    for(int z = 0; z < board.length; z++){
       if(board[z] == 1){
         board[z] = y;
         y++;
@@ -91,11 +99,16 @@ public class Coinstrip{
 
       //Check if coin exists in board
       boolean coinExists = false;
-      for(int i = 1; i < numCoins+1; i++){
-        if(coin == i){
-          i = numCoins;
+      for(int i = 0; i < board.length; i++){
+        if(board[i] == coin){
+          i = board.length;
           coinExists = true;
         }
+      }
+
+      if(!coinExists){
+        System.out.println("That coin doesn't exist on the game board!");
+        error = true;
       }
 
       //Find location of selected coin
@@ -105,10 +118,6 @@ public class Coinstrip{
             coinLoc = i;
           }
         }
-      }
-      if(!coinExists){
-        System.out.println("That coin doesn't exist on the game board!");
-        error = true;
       }
 
       //Check if coin has another coin to its left
@@ -143,16 +152,18 @@ public class Coinstrip{
             nextCoinLoc = 0;
             i = board.length;
           }
-          if(coin - 1 == board[i]){
+          if(coin != 1 && coin - 1 == board[i]){
             nextCoinLoc = i;
             i = board.length;
           }
         }
 
-        if(numMoves >= (coinLoc - nextCoinLoc)){
+
+        if(!error && numMoves > (coinLoc - nextCoinLoc)){
           System.out.println("Two coins can't pass!");
           error = true;
         }
+
       }
     } while(error);
 
@@ -177,9 +188,9 @@ public class Coinstrip{
       if(board[i] == i+1){
         z--;
       }
-      if(z == 0){
-        won = true;
-      }
+    }
+    if(z == 0){
+      won = true;
     }
     return won;
   }
@@ -192,6 +203,12 @@ public class Coinstrip{
       b.takeTurn();
       won = b.won();
     }
-    System.out.println("player " + (b.getPlayer() - 1) + " won");
+    int winP = 1;
+    if(b.getPlayer() == 1){
+      winP = 2;
+    } else {
+      winP = 1;
+    }
+    System.out.println("Player " + winP + " won!");
   }
 }
